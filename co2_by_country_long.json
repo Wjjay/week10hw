@@ -1,0 +1,145 @@
+{
+    "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+    
+    "params": [
+        {
+            "name": "year",
+            "value": 1961,
+            "bind": {
+                "input": "range",
+                "min": 1961,
+                "max": 2018,
+                "step": 1,
+                "name": "Year: "
+            }
+        }            
+    ],
+    "vconcat": [
+        
+        {
+            "width":1280,
+            "height":720,
+            "title": { "text": "CO2 Emission per capita" },
+            "projection": {"type": "equalEarth"},
+            "layer": [
+                {
+                    "name": "defaultMap",
+                    "transform": [
+                        {
+                            "calculate": "'No value'",
+                            "as": "emission"
+                        }
+                    ],
+                    "data": {
+                        "url": "data/world_map_topo.json",
+                        "format": { 
+                            "type": "topojson",
+                            "feature": "world_map"}
+                    },
+                    "mark": {"type": "geoshape", "fill": "lightgray", "stroke": "black"},
+        
+                    "encoding":{
+                        "tooltip": [
+                            {
+                                "field": "properties.name",
+                                "type": "nominal",
+                                "title": "Country"
+                            },
+                            {
+                                "title": "CO2 Emissions (metric tonnes)",
+                                "field": "emission"
+                            }
+                        ]
+                    }
+                },       
+                
+        
+                {
+                    "name": "choropleth",
+                    "data": {
+                        "url": "data/carbon_gdp_temp.csv"
+                        },
+                    "params": [
+                        {
+                            "name": "countrySelect",
+                            "select":{
+                                "type": "point"
+                            }
+                        }
+                    ],
+                    "transform": [
+                        {
+                            "lookup": "Country Code",
+                            "from": {
+                                "data": {
+                                    "url": "data/world_map_topo.json",
+                                    "format": { 
+                                        "type": "topojson",
+                                        "feature": "world_map"
+                                    }
+                                },
+                                "key": "properties.iso_a3"
+                            },
+                            "as": "Emissions"
+                        },
+                        {
+                            "filter": "datum.Year == year"
+                        },
+                        {
+                            "filter": "datum['CO2 Emission'] > 0"
+                        },
+                        {
+                            "calculate": "datum['CO2 Emission']",
+                            "as": "CO2Emission"
+                        }
+                    ],
+                        
+                    "mark": {
+                            "type": "geoshape",
+                            "stroke": "black"
+                        },
+                            
+                    "encoding": {
+                        "shape": {
+                            "field": "Emissions",
+                            "type": "geojson"
+                        },
+                        "color":{
+                            "field": "CO2Emission",
+                            "type": "quantitative",
+                            "scale": {
+                                "type": "log",
+                                "range":["lightgreen","red"]
+                            },
+                            "title": "Emission per captia"
+                        },
+                        "fillOpacity":{
+                            "condition": {
+                                "param": "countrySelect",
+                                "value": 1
+                            },
+                            "value": 0.2
+                        },
+                        "tooltip": [
+                            {
+                                "field": "Country Name", 
+                                "type": "nominal", 
+                                "title": "Country"
+                            },
+                            {
+                                "field": "CO2 Emission",
+                                "type": "quantitative",
+                                "title": "CO2 Emissions (metric tonnes)",
+                                "format": ".3f"
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
+    ]
+            
+        
+    
+    
+}

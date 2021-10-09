@@ -1,0 +1,241 @@
+{
+    "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+    
+        "width":1200,
+        "height":720,
+        "params": [
+            {
+                "name": "continentSelect",
+                "value": null,
+                "bind":{
+                    "input": "select",
+                    "options": [
+                        null,
+                        "Oceania",
+                        "Africa",
+                        "Asia",
+                        "Europe",
+                        "North America",
+                        "South America"
+                    ],
+                    "labels": [
+                        "All",
+                        "Oceania",
+                        "Africa",
+                        "Asia",
+                        "Europe",
+                        "North America",
+                        "South America"
+                    ],
+                    "name": "Continent Select: "            
+                }
+            }   
+        ],
+        "data": {
+            "url": "data/continent_data.csv"
+            },
+        "transform": [
+            {"filter": "datum.Year >= 1961"},
+            {"filter": "datum.Year <= 2018"},
+            {
+                "filter": "continentSelect == null || datum['Continent_Name'] == continentSelect"
+            },
+            {
+                "calculate": "datum.GDP/1000000000000",
+                "as": "TDP"
+            }
+        ],
+        "vconcat": [
+            {
+                "title":{"text": "Yearly CO2 Emissions per capita", "align": "center"},
+                "width":1180,
+                "height":120,
+                "layer": [
+                    {     
+                        "mark": "area",
+                        "encoding":{
+                        "x": {
+                            "field":"Year",
+                            "type": "quantitative",
+                            "scale":{
+                                "domain": [1961, 2018]
+                            },
+                            "title": "Year",
+                            "axis": {
+                                "tickCount": 20, 
+                                "format": "",
+                                "labels":false,
+                                "title": ""                              
+                            }
+                        },
+                        "y":{
+                            "aggregate": "sum",
+                            "field": "CO2 Emission",
+                            "type": "quantitative",
+                            "title": "CO2 (metric tonnes)"
+                            
+                        },
+                        "color":{
+                            "field":"Continent_Name",
+                            "type": "nominal",
+                            "title": "Continent Name"
+                        },
+            
+                        "tooltip": [
+                            
+                            {
+                                "field": "Year"                    
+                            },
+                            {
+                                "field": "Continent_Name",
+                                "type": "nominal",
+                                "title": "Continent"
+                            },
+                            {
+                                "field": "CO2 Emission",
+                                "type": "ordinal",
+                                "format": ".3f",
+                                "title": "CO2 Emissions (metric tonnes)"
+                                }
+                            ]            
+                        }
+                    }
+                ]
+            },
+            {
+               "title": {
+                   "text": "Yearly GDP ($USD) per capita",
+                   "align": "center"
+               },
+               "width":1180,
+                "height":120,
+               "layer": [
+                {     
+                    "mark": "area",
+                    "encoding":{
+                    "x": {
+                        "field":"Year",
+                        "type": "quantitative",
+                        "scale":{
+                            "domain": [1961, 2018]
+                        },
+                        "title": "Year",
+                        "axis": {
+                            "tickCount": 20, 
+                            "format": "", 
+                            "labels":false,
+                            "title": ""  
+                        }
+                    },
+                    "y":{
+                        "field": "TDP",
+                        "aggregate": "sum",
+                        "type": "quantitative",
+                        "title": "GDP ($Trillion USD)"
+                    },
+                    "color":{
+                        "field":"Continent_Name",
+                        "type": "nominal"
+                    },
+        
+                    "tooltip": [
+                        
+                        {
+                            "field": "Year"                    
+                        },
+                        {
+                            "field": "Continent_Name",
+                            "type": "nominal",
+                            "title": "Continent"
+                        },
+                        {
+                            "field": "GDP",
+                            "format": ",.2f",
+                            "title": "GDP ($USD)"
+                            }
+                        ]            
+                    }
+                }
+                  
+            ]
+            },
+            {
+                "title": {
+                    "text": "Average Yearly Temperature Change",
+                    "align": "center"
+                },
+                "width":1180,
+                 "height":120,
+                "layer": [
+                 {     
+                     "mark": "line",
+                     "encoding":{
+                     "x": {
+                         "field":"Year",
+                         "type": "quantitative",
+                         "scale":{
+                             "domain": [1961, 2018]
+                         },
+                         "title": "Year",
+                         "axis": {"tickCount": 20, "format": ""}
+                     },
+                     "y":{
+                         "field": "Temperature Change",
+                         "type": "quantitative",
+                         "title": "Temperature Change (°C)"
+                     },
+                     "color": {
+                        "field": "Continent_Name",
+                        "type": "nominal", 
+                        "scale": { 
+                            "domain": [ 
+                                "Africa", 
+                                "Asia", 
+                                "Europe", 
+                                "North America", 
+                                "Oceania", 
+                                "South America" 
+                            ], 
+                        "range": [ 
+                            "#EB2B91", 
+                            "#E6E318", 
+                            "#26EBDD", 
+                            "#FC8F68", 
+                            "#2128E0", 
+                            "#EBC14A" ] } },
+         
+                     "tooltip": [
+                         
+                         {
+                             "field": "Year"                    
+                         },
+                         {
+                             "field": "Continent_Name",
+                             "type": "nominal",
+                             "title": "Continent"
+                         },
+                         {
+                             "field": "Temperature Change",
+                             "type": "ordinal",
+                             "format": ".3f",
+                             "title": "Temperature Change (°C)"
+                             }
+                         ]            
+                     }
+                 }
+                   
+             ]
+             }
+        ]
+        
+
+            
+
+}
+
+
+    
+            
+        
+    
+    
